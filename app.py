@@ -25,7 +25,7 @@ if user_input:
         with st.spinner("Investigating your case..."):
             result = asyncio.run(resolve_graph.ainvoke({
                 "customer_message": user_input,
-                "conversation_history": st.session_state.history,
+                "conversation_history": st.session_state.history[:-1],
             }))
             
             final_response = result["final_response"]

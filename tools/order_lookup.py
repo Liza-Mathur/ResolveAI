@@ -32,6 +32,7 @@ def get_order_details(order_id: str) -> dict:
 
     return {
         "order_id": order["order_id"],
+        "delivery_date":order["delivery_date"],
         "order_status": order.get("status"),
         "total_amount": order.get("total_amount"),
         "customer": {

@@ -6,10 +6,12 @@ from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
 import os
 import sys
+from datetime import date
+
 
 load_dotenv()
 
-SYSTEM_PROMPT = """You are the Policy Reasoner Agent for Stryde's order dispute resolution system.
+SYSTEM_PROMPT = f"""You are the Policy Reasoner Agent for Stryde's order dispute resolution system.
 
 You receive: (1) the customer's original claim/message, and (2) structured facts about
 their order (status, products, customer loyalty tier) gathered by the Investigator agent.
@@ -34,7 +36,10 @@ the policy text explicitly and fully covers the situation described. When in dou
 Respond in this format:
 DECISION: [APPROVED / DENIED / ESCALATE]
 REASONING: [clear explanation citing the specific policy rule, or explaining the ambiguity]
-"""
+
+for reference - today's date is {date.today()}
+ """
+
 
 async def run_policy_reasoner(customer_message: str, investigator_facts: str) -> str:
     server_params = StdioServerParameters(
@@ -54,9 +59,9 @@ async def run_policy_reasoner(customer_message: str, investigator_facts: str) ->
 
             user_content = f"""Customer claim: {customer_message}
 
-Order facts from Investigator:
-{investigator_facts}
-"""
+            Order facts from Investigator:
+            {investigator_facts}
+            """
 
             messages = [
                 {"role": "system", "content": SYSTEM_PROMPT},

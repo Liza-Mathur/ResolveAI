@@ -14,7 +14,8 @@ POLICY_FILES = [
     "data/shipping_policy.md",
 ]
 
-PERSIST_DIR = "vectorstore/chroma_db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # tools/ folder
+PERSIST_DIR = os.path.join(BASE_DIR, "..", "vectorstore", "chroma_db")
 
 TABLE_BLOCK_RE = re.compile(r"((?:^\|.*\|\s*\n)+)", re.MULTILINE)
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*)$", re.MULTILINE)
