@@ -5,13 +5,32 @@ from langgraph.graph import StateGraph, END
 from agents.Investigator import run_investigator
 from agents.policy_reasoner import run_policy_reasoner
 from agents.Response_drafter import run_response_drafter
+from agents.router_agent import run_router
 
 
 class DisputeState(TypedDict):
     customer_message: str
+    router_decision: str
     investigator_facts: str
     policy_decision: str
     final_response: str
+
+async def router_node(state: DisputeState) -> dict:
+    result = await run_router(state["customer_message"])
+    if result == "PROCEED":
+        return {"router_decision": "proceed"}
+    else:
+        return {"router_decision": "clarify", "final_response": result}
+
+
+async def end_early_node(state: DisputeState) -> dict:
+    return {}
+
+
+def route_after_router(state: DisputeState) -> str:
+    if state["router_decision"] == "proceed":
+        return "investigator"
+    return "end_early"
 
 
 async def investigator_node(state: DisputeState) -> dict:
@@ -50,12 +69,24 @@ def route_after_policy(state: DisputeState) -> str:
 
 graph = StateGraph(DisputeState)
 
+graph.add_node("router", router_node)
 graph.add_node("investigator", investigator_node)
 graph.add_node("policy_reasoner", policy_reasoner_node)
 graph.add_node("response_drafter", response_drafter_node)
 graph.add_node("human_handoff", human_handoff_node)
+graph.add_node("end_early", end_early_node)
 
-graph.set_entry_point("investigator")
+graph.set_entry_point("router")
+
+graph.add_conditional_edges(
+    "router",
+    route_after_router,
+    {
+        "investigator": "investigator",
+        "end_early": "end_early",
+    }
+)
+
 graph.add_edge("investigator", "policy_reasoner")
 
 graph.add_conditional_edges(
@@ -69,9 +100,9 @@ graph.add_conditional_edges(
 
 graph.add_edge("response_drafter", END)
 graph.add_edge("human_handoff", END)
+graph.add_edge("end_early", END)
 
 app = graph.compile()
-
 
 async def main():
     result = await app.ainvoke({
