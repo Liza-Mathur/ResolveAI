@@ -24,8 +24,10 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Investigating your case..."):
             result = asyncio.run(resolve_graph.ainvoke({
-                "customer_message": user_input
+                "customer_message": user_input,
+                "conversation_history": st.session_state.history,
             }))
+            
             final_response = result["final_response"]
 
             with st.expander("See reasoning (debug)"):

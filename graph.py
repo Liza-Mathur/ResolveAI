@@ -9,14 +9,19 @@ from agents.router_agent import run_router
 
 
 class DisputeState(TypedDict):
-    customer_message: str
+    customer_message: str       # the latest message
+    conversation_history: list 
     router_decision: str
     investigator_facts: str
     policy_decision: str
     final_response: str
 
 async def router_node(state: DisputeState) -> dict:
-    result = await run_router(state["customer_message"])
+    history_text = "\n".join(
+        f"{m['role']}: {m['content']}" for m in state["conversation_history"]
+    )
+    full_context = f"{history_text}\nuser: {state['customer_message']}"
+    result = await run_router(full_context)
     if result == "PROCEED":
         return {"router_decision": "proceed"}
     else:
