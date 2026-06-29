@@ -4,6 +4,7 @@ from langchain_mcp_adapters.tools import load_mcp_tools
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
@@ -36,8 +37,9 @@ REASONING: [clear explanation citing the specific policy rule, or explaining the
 
 async def run_policy_reasoner(customer_message: str, investigator_facts: str) -> str:
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=["mcp_server.py"],
+        env=os.environ.copy(),
     )
 
     async with stdio_client(server_params) as (read, write):

@@ -5,6 +5,7 @@ from langchain_mcp_adapters.sessions import StdioConnection
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
@@ -26,8 +27,9 @@ Do NOT discuss policy, refunds, or eligibility. Your ONLY job is to look up and 
 
 async def run_investigator(customer_message: str) -> str:
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=["mcp_server.py"],
+        env=os.environ.copy(),
     )
 
     async with stdio_client(server_params) as (read, write):
