@@ -1,0 +1,23 @@
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+
+# Vector store (regenerated on setup, not committed)
+vectorstore/chroma_db/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
