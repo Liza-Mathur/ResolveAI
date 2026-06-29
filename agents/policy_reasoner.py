@@ -5,6 +5,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
 import os
+import sys
 
 load_dotenv()
 
