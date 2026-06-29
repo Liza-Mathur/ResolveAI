@@ -4,8 +4,6 @@
 # Virtual environment
 venv/
 
-# Vector store (regenerated on setup, not committed)
-vectorstore/chroma_db/
 
 # Python cache
 __pycache__/
