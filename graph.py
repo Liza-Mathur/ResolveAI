@@ -39,7 +39,13 @@ def route_after_router(state: DisputeState) -> str:
 
 
 async def investigator_node(state: DisputeState) -> dict:
-    facts = await run_investigator(state["customer_message"])
+    history = state.get("conversation_history", [])
+    history_text = "\n".join(
+        f"{m['role']}: {m['content']}" for m in history
+    )
+    full_context = f"{history_text}\nuser: {state['customer_message']}" if history_text else state["customer_message"]
+
+    facts = await run_investigator(full_context)
     return {"investigator_facts": facts}
 
 
