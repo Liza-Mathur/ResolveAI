@@ -17,3 +17,4 @@ pydantic
 tiktoken
 mcp
 langchain-mcp-adapters
+altair
